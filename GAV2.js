@@ -179,10 +179,10 @@ $('#btnChooseOtherPlan').click(function(){
 });
 
 
-function Plan(tasksArray,name,goalIndex){
+function Plan(tasksArray,name){
     this.tasksArray= tasksArray;
     this.name=name;
-    this.goalIndex= goalIndex;
+    
 }
 
 function Task() {
@@ -191,8 +191,13 @@ function Task() {
 
 
 
-
-
+var selectedPlanTaskArray;
+var selectedPlan;
+function makeNewPlan(){
+    var i= goalsArray[selectedGoalIndex].plansArray.length+1;
+    selectedPlanTaskArray=[];
+    var plan = new Plan(selectedPlanTaskArray,goalsArray[selectedGoalIndex].what+" Plan "+i)
+}
 
 //merge goal
 
