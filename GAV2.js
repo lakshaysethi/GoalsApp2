@@ -108,10 +108,10 @@ $(document).ready(function(){
 // functionality for start work 
 
 var selectedGoalIndex= 0;
-function returnSelectedGoalIndix(a){
-    var t = a.parent().text().indexOf(".");
+function returnSelectedGoalIndix(selectedGoal){
+    var t = selectedGoal.parent().text().indexOf(".");
 
-    var i = a.parent().text().slice(0,t)-1;
+    var i = selectedGoal.parent().text().slice(0,t)-1;
     
     selectedGoalIndex= i;
     return i;
@@ -167,15 +167,18 @@ $('#selectDifferentGoalBtn').click(function(){
 });
 
 $("#newPlanBtn").click(function(){
+    
+    makeNewPlan();
     $("#newPlanCreationScreen").show();
     $("#plansScreen").hide();
-    
+    showSelectedPlan();
 
 });
 
 $('#btnChooseOtherPlan').click(function(){
     $("#newPlanCreationScreen").hide();
     $("#plansScreen").show();
+    updatePlansList();
 });
 
 
@@ -193,11 +196,17 @@ function Task() {
 
 var selectedPlanTaskArray;
 var selectedPlan;
+
 function makeNewPlan(){
     var i= goalsArray[selectedGoalIndex].plansArray.length+1;
     selectedPlanTaskArray=[];
-    var plan = new Plan(selectedPlanTaskArray,goalsArray[selectedGoalIndex].what+" Plan "+i)
+    selectedPlan = new Plan(selectedPlanTaskArray,goalsArray[selectedGoalIndex].what+" Plan "+i)
+    goalsArray[selectedGoalIndex].plansArray.push(selectedPlan);
 }
 
+function showSelectedPlan(){
+    $(".selectedPlan").html(selectedPlan.name);
+    
+}
 //merge goal
 
