@@ -1,0 +1,11 @@
+#Container{
+    
+    margin: 0 60px;
+}
+.goalWhat{
+	margin: 8px 0;
+}
+.goalWhat button{
+	font-size: 8px;
+	margin-left: 6px;
+}

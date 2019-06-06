@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <script src="https://code.jquery.com/jquery-3.4.1.js"
+            integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+            crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet" href="GAV2.css">
+    <title>Goals App v2</title>
+</head>
+<body>
+<div id="Container">
+    <div id="pageContainer">
+        <div id="firstScreen">
+            <h1>What are your Goals?</h1>
+            <p>Make a list of all your Goals</p>
+            <p>What do you want more of in your life? What do you dont want/ want to change about your life?</p>
+            <input type="text" id="GoalsInputField" placeholder="I want to earn ... a week...">
+            <button id="AddGoalBtn">Add Goal</button>
+            <div id="GoalsListDisplayer"></div>
+            <button id="nextStepBtn1">Help me select a goal to work on</button>
+        </div>
+        
+        <div id="plansScreen">
+            <button id="selectDifferentGoalBtn">Select other goal</button>
+            <div class="goalWhatOnPlansScreen"></div>
+            <p>Select a plan to work on or make a new plan:</p>
+            <button id="newPlanBtn">New Plan</button>
+            <div id="plansHolder"></div>
+    
+    
+        </div>
+    
+        <div id="newPlanCreationScreen">
+            <button id="btnChooseOtherPlan">Choose other plan</button>
+            <div class="goalWhatOnPlansScreen"></div>
+            <p>Make a list of everything you can think of, that you can do to achieve this goal</p>
+            
+    
+        </div>
+    </div>
+</div>  
+</body>
+<script src="GAV2.js"></script>
+</html>
