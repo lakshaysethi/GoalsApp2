@@ -126,6 +126,7 @@ $('#GoalsListDisplayer').on('click','.btnStartWorkOnGoal',function(){
     $('#GoalsListDisplayer').html(WhatElementsFromGoalsArray());
     //fill previous plans
     updateGoalsList();
+    updatePlansList();
     //
 });
 
@@ -210,3 +211,10 @@ function showSelectedPlan(){
 }
 //merge goal
 
+function updatePlansList(){
+    var html="";
+    for(i=0;i<goalsArray[selectedGoalIndex].plansArray.length;i++){
+        html+="<div class ='plan'>"+goalsArray[selectedGoalIndex].plansArray[i].name+"<button>start</button></div><br>";
+    }
+    $("#plansHolder").html(html);
+}
