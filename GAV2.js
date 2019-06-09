@@ -14,11 +14,12 @@ Storage.prototype.getObject = function(key) {
 // userObject = localStorage.getObject('user');
 
 
-function Goal(what,whatDetails,why,plansArray){
+function Goal(what,whatDetails,why,plansArray,accomplishments){
     this.what=what;
     this.whatDetails=whatDetails;
     this.why = why;
     this.plansArray= plansArray;
+    this.accomplishments= accomplishments;
 }
 //goal has array of  plans 
 // plans have array of tasks
@@ -59,7 +60,7 @@ function checkGoalAlready(goalWhat){
 function makeNewGoal(){
     if($('#GoalsInputField').val()!=""&&!checkGoalAlready($('#GoalsInputField').val())){
         var what =  $('#GoalsInputField').val();
-        goalsArray.push(new Goal(what,"","",[]));
+        goalsArray.push(new Goal(what,"","",[],[]));
         
         $('#GoalsListDisplayer').html(WhatElementsFromGoalsArray());
         
@@ -212,6 +213,7 @@ function showSelectedPlan(){
     $(".selectedPlan").html(selectedPlan.name);
     $("#newPlanCreationScreen").show();
     $("#plansScreen").hide();
+    updateTaskList();
     
 }
 //merge goal
@@ -228,4 +230,102 @@ $("#plansHolder").on("click",".plan button",function(){
     var i = parseInt($(this).parent().html().slice(5,6))-1;
     updateSelectedPlan(i);
     showSelectedPlan();
+});
+
+function updateTaskList(){
+    var html = "";
+    for(i=0;i<selectedPlan.tasksArray.length;i++){
+        
+        html+="<div class='task'>"+i+". "+selectedPlan.tasksArray[i]+ "<button class='TB startTaskBtn'>start</button><button class='TB delTaskBtn'>delete</button><button class='TB makeGoalBtn'>Make Goal</button><br><br></div>";
+    }
+    $("#TaskListDisplayer").html(html);
+}
+
+$('#tasksInputField').val("");
+
+
+function makeNewTask(){
+    if($('#tasksInputField').val()!=""){
+        selectedPlan.tasksArray.push($('#tasksInputField').val());
+    }
+    $('#tasksInputField').val("");
+    updateTaskList();
+}
+
+$('#tasksInputField').on('keypress',function(e){
+    if(e.which==13){
+        makeNewTask();
+    }
+});
+
+
+
+$('#addTaskBtn').click(function(){
+    makeNewTask();
+});
+var selectedTask;
+var selectedTaskIndex;
+function updateSelectedTask(a){
+    var i = a.parent().html().slice(0,1);
+    selectedTask= selectedPlan.tasksArray[i];
+    selectedTaskIndex= i;
+}
+$(".workOnTaskScreen").hide();
+$("#TaskListDisplayer").on("click",".task .startTaskBtn",function(){
+    updateSelectedTask($(this));
+    $(".taskName").html("Start working on: "+selectedTask);
+    $(".workOnTaskScreen").show();
+    $("#newPlanCreationScreen").hide();
+});
+
+
+$(".otherTaskBtn").click(function(){
+    $(".workOnTaskScreen").hide();
+    $("#newPlanCreationScreen").show();
+});
+$("#TaskListDisplayer").on("click",".task .makeGoalBtn",function(){
+    updateSelectedTask($(this));
+    if(!checkGoalAlready(selectedTask)){
+        goalsArray.push(new Goal(selectedTask,"","",[],[]));
+        $("#firstScreen").show();
+        $("#newPlanCreationScreen").hide();
+        $(".workOnTaskScreen").hide();
+        updateGoalsList();
+    }else{
+        alert("you already have a goal named: "+selectedTask)
+    }
+
+});
+$(".makeGoalBtn").click(function(){
+    if(!checkGoalAlready(selectedTask)){
+        goalsArray.push(new Goal(selectedTask,"","",[],[]));
+        $("#firstScreen").show();
+        $("#newPlanCreationScreen").hide();
+        $(".workOnTaskScreen").hide();
+        updateGoalsList();
+    }else{
+        alert("you already have a goal named: "+selectedTask)
+    }
+});
+var interval="10 minutes";
+function updateAccomps(i){
+    if(i==1){goalsArray[selectedGoalIndex].accomplishments.push("finished: "+selectedTask+"<br>");}
+    else if(i==2){goalsArray[selectedGoalIndex].accomplishments.push("worked on"+selectedTask+" for "+ interval+"<br>");}
+    var html="";
+    for(i=0;i<goalsArray[selectedGoalIndex].accomplishments.length;i++){
+        html+=goalsArray[selectedGoalIndex].accomplishments[i];
+    }
+    $(".accompPara").html(html);
+}
+
+$(".doneBtn").click(function(){
+        
+    updateAccomps(1);
+});
+
+
+$("#TaskListDisplayer").on("click",".task .delTaskBtn",function(){
+    updateSelectedTask($(this));
+    selectedPlan.tasksArray.splice(selectedTaskIndex,1);
+    updateTaskList();
 });
