@@ -201,12 +201,17 @@ var selectedPlan;
 function makeNewPlan(){
     var i= goalsArray[selectedGoalIndex].plansArray.length+1;
     selectedPlanTaskArray=[];
-    selectedPlan = new Plan(selectedPlanTaskArray,goalsArray[selectedGoalIndex].what+" Plan "+i)
+    selectedPlan = new Plan(selectedPlanTaskArray,"Plan "+i);
     goalsArray[selectedGoalIndex].plansArray.push(selectedPlan);
 }
-
+function updateSelectedPlan(i){
+    
+    selectedPlan = goalsArray[selectedGoalIndex].plansArray[i];
+}
 function showSelectedPlan(){
     $(".selectedPlan").html(selectedPlan.name);
+    $("#newPlanCreationScreen").show();
+    $("#plansScreen").hide();
     
 }
 //merge goal
@@ -218,3 +223,9 @@ function updatePlansList(){
     }
     $("#plansHolder").html(html);
 }
+
+$("#plansHolder").on("click",".plan button",function(){
+    var i = parseInt($(this).parent().html().slice(5,6))-1;
+    updateSelectedPlan(i);
+    showSelectedPlan();
+});
