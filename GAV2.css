@@ -1,15 +1,30 @@
 body{
-	background-color: #6b6de2;
+	background-color: #5aa5e2;
 }
 
 #Container{
     
-    margin: 0 60px;
+    margin: 0 auto;
 }
 .goalWhat{
 	margin: 8px 0;
 }
 .goalWhat button{
+	font-size: 8px;
+	margin-left: 6px;
+}
+
+.instructions{
+	background-color: aqua;
+	border-radius: 10%;
+}
+.task{
+	background-color: azure;
+	border-radius: 10%;
+	display: inline;
+}
+
+.task button{
 	font-size: 8px;
 	margin-left: 6px;
 }

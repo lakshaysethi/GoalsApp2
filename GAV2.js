@@ -190,8 +190,9 @@ function Plan(tasksArray,name){
     
 }
 
-function Task() {
-
+function Task(name,subTaskArray) {
+    this.name= name;
+    this.subTaskArray= subTaskArray;
 }
 
 
@@ -236,7 +237,7 @@ function updateTaskList(){
     var html = "";
     for(i=0;i<selectedPlan.tasksArray.length;i++){
         
-        html+="<div class='task'>"+i+". "+selectedPlan.tasksArray[i]+ "<button class='TB startTaskBtn'>start</button><button class='TB delTaskBtn'>delete</button><button class='TB makeGoalBtn'>Make Goal</button><br><br></div>";
+        html+="<div class='task'>"+i+". "+selectedPlan.tasksArray[i].name+ "<button class='TB startTaskBtn'>start</button><button class='TB delTaskBtn'>delete</button><button class='TB makeGoalBtn'>Make Goal</button></div><br><br>";
     }
     $("#TaskListDisplayer").html(html);
 }
@@ -246,7 +247,7 @@ $('#tasksInputField').val("");
 
 function makeNewTask(){
     if($('#tasksInputField').val()!=""){
-        selectedPlan.tasksArray.push($('#tasksInputField').val());
+        selectedPlan.tasksArray.push(new Task($('#tasksInputField').val(),[]));
     }
     $('#tasksInputField').val("");
     updateTaskList();
@@ -273,26 +274,29 @@ function updateSelectedTask(a){
 $(".workOnTaskScreen").hide();
 $("#TaskListDisplayer").on("click",".task .startTaskBtn",function(){
     updateSelectedTask($(this));
-    $(".taskName").html("Start working on: "+selectedTask);
+    $(".taskName").html("Start working on: "+selectedTask.name);
     $(".workOnTaskScreen").show();
+    updateAccomps(3);
+    updateSubTaskList();
     $("#newPlanCreationScreen").hide();
 });
 
 
 $(".otherTaskBtn").click(function(){
     $(".workOnTaskScreen").hide();
+
     $("#newPlanCreationScreen").show();
 });
 $("#TaskListDisplayer").on("click",".task .makeGoalBtn",function(){
     updateSelectedTask($(this));
-    if(!checkGoalAlready(selectedTask)){
-        goalsArray.push(new Goal(selectedTask,"","",[],[]));
+    if(!checkGoalAlready(selectedTask.name)){
+        goalsArray.push(new Goal(selectedTask.name,"","",[],[]));
         $("#firstScreen").show();
         $("#newPlanCreationScreen").hide();
         $(".workOnTaskScreen").hide();
         updateGoalsList();
     }else{
-        alert("you already have a goal named: "+selectedTask)
+        alert("you already have a goal named: "+selectedTask.name)
     }
 
 });
@@ -309,8 +313,8 @@ $(".makeGoalBtn").click(function(){
 });
 var interval="10 minutes";
 function updateAccomps(i){
-    if(i==1){goalsArray[selectedGoalIndex].accomplishments.push("finished: "+selectedTask+"<br>");}
-    else if(i==2){goalsArray[selectedGoalIndex].accomplishments.push("worked on"+selectedTask+" for "+ interval+"<br>");}
+    if(i==1){goalsArray[selectedGoalIndex].accomplishments.push("finished: "+selectedTask.name+"<br>");}
+    else if(i==2){goalsArray[selectedGoalIndex].accomplishments.push("worked on"+selectedTask.name+" for "+ interval+"<br>");}
     var html="";
     for(i=0;i<goalsArray[selectedGoalIndex].accomplishments.length;i++){
         html+=goalsArray[selectedGoalIndex].accomplishments[i];
@@ -328,4 +332,77 @@ $("#TaskListDisplayer").on("click",".task .delTaskBtn",function(){
     updateSelectedTask($(this));
     selectedPlan.tasksArray.splice(selectedTaskIndex,1);
     updateTaskList();
+});
+
+
+
+
+
+
+$('#subTasksInputField').val("");
+function updateSubTaskList(){
+    var html="";
+    for(i=0;i<selectedTask.subTaskArray.length;i++){
+        html+="<div class='task'>"+i+". "+selectedTask.subTaskArray[i].name+ "<button class='TB startTaskBtn'>start</button><button class='TB delTaskBtn'>delete</button><button class='TB makeGoalBtn'>Make Goal</button></div><br></br>";
+    }
+    
+    $(".subTasks").html(html);
+}
+
+function makeNewSubTask(){
+    if($('#subTasksInputField').val()!=""){
+        selectedTask.subTaskArray.push(new Task($('#subTasksInputField').val(),[]));
+    }
+    $('#subTasksInputField').val("");
+    updateSubTaskList();
+}
+$("#addSubTaskBtn").click(function(){makeNewSubTask();});
+$('#subTasksInputField').on('keypress',function(e){
+    if(e.which==13){
+        makeNewSubTask();
+    }
+});
+
+
+
+$(".addSubTaskButton").click(function(){
+    makeNewSubTask();
+});
+
+
+
+$(".subTasks").on("click",".task .startTaskBtn",function(){
+    updateSelectedSubTask($(this));
+    $(".taskName").html("Start working on: "+selectedTask.name);
+    $(".workOnTaskScreen").show();
+    updateAccomps(3);
+    updateSubTaskList();
+    $("#newPlanCreationScreen").hide();
+});
+function updateSelectedSubTask(a){
+    var i = a.parent().html().slice(0,1);
+    selectedTask= selectedTask.subTaskArray[i];
+    selectedTaskIndex= i;
+}
+
+$(".subTasks").on("click",".task .delTaskBtn",function(){
+    var i = $(this).parent().html().slice(0,1);//know the index of the bad task
+    selectedTask.subTaskArray.splice(i,1);//knowthe array //splice from array
+    updateSubTaskList();
+    // updateSelectedTask($(this));
+    // selectedPlan.tasksArray.splice(selectedTaskIndex,1);
+    // updateTaskList();
+});
+
+$(".subTasks").on("click",".task .makeGoalBtn",function(){
+    updateSelectedSubTask($(this));
+    if(!checkGoalAlready(selectedTask.name)){
+        goalsArray.push(new Goal(selectedTask.name,"","",[],[]));
+        $("#firstScreen").show();
+        $("#newPlanCreationScreen").hide();
+        $(".workOnTaskScreen").hide();
+        updateGoalsList();
+    }else{
+        alert("you already have a goal named: "+selectedTask.name)
+    }
 });
