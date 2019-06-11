@@ -190,9 +190,10 @@ function Plan(tasksArray,name){
     
 }
 
-function Task(name,subTaskArray) {
+function Task(name,subTaskArray,note) {
     this.name= name;
     this.subTaskArray= subTaskArray;
+    this.note= note;
 }
 
 
@@ -247,7 +248,7 @@ $('#tasksInputField').val("");
 
 function makeNewTask(){
     if($('#tasksInputField').val()!=""){
-        selectedPlan.tasksArray.push(new Task($('#tasksInputField').val(),[]));
+        selectedPlan.tasksArray.push(new Task($('#tasksInputField').val(),[],""));
     }
     $('#tasksInputField').val("");
     updateTaskList();
@@ -313,15 +314,19 @@ $(".makeGoalBtn").click(function(){
 });
 var interval="10 minutes";
 function updateAccomps(i){
-    if(i==1){goalsArray[selectedGoalIndex].accomplishments.push("finished: "+selectedTask.name+"<br>");}
-    else if(i==2){goalsArray[selectedGoalIndex].accomplishments.push("worked on"+selectedTask.name+" for "+ interval+"<br>");}
+    if(i==1){goalsArray[selectedGoalIndex].accomplishments.push("finished: "+selectedTask.name);}
+    else if(i==2){goalsArray[selectedGoalIndex].accomplishments.push("worked on"+selectedTask.name+" for "+ interval);}
     var html="";
     for(i=0;i<goalsArray[selectedGoalIndex].accomplishments.length;i++){
-        html+=goalsArray[selectedGoalIndex].accomplishments[i];
+        html+="<div class'achievement'>"+i+" "+goalsArray[selectedGoalIndex].accomplishments[i]+"<button>delete</button></div><br>";
     }
     $(".accompPara").html(html);
 }
-
+$(".accompPara").on("click","button",function(){
+    var i=$(this).parent().html().slice(0,1);
+    goalsArray[selectedGoalIndex].accomplishments.splice(i,1);
+    updateAccomps(3);
+})
 $(".doneBtn").click(function(){
         
     updateAccomps(1);
@@ -351,7 +356,7 @@ function updateSubTaskList(){
 
 function makeNewSubTask(){
     if($('#subTasksInputField').val()!=""){
-        selectedTask.subTaskArray.push(new Task($('#subTasksInputField').val(),[]));
+        selectedTask.subTaskArray.push(new Task($('#subTasksInputField').val(),[],""));
     }
     $('#subTasksInputField').val("");
     updateSubTaskList();

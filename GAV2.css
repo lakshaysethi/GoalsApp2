@@ -8,6 +8,7 @@ body{
 }
 .goalWhat{
 	margin: 8px 0;
+	background-color: chartreuse;
 }
 .goalWhat button{
 	font-size: 8px;
@@ -28,3 +29,12 @@ body{
 	font-size: 8px;
 	margin-left: 6px;
 }
+
+.taskName{
+	background-color: blueviolet;
+	border-radius: 20vw; 
+	padding: 2vw 2vw 4vw 2vw; 
+	width: 90%;
+} 
+
+
