@@ -60,7 +60,7 @@ function checkGoalAlready(goalWhat){
 function makeNewGoal(){
     if($('#GoalsInputField').val()!=""&&!checkGoalAlready($('#GoalsInputField').val())){
         var what =  $('#GoalsInputField').val();
-        goalsArray.push(new Goal(what,"","",[],[]));
+        goalsArray.push(new Goal(what,[],"",[],[]));
         
         $('#GoalsListDisplayer').html(WhatElementsFromGoalsArray());
         
@@ -88,7 +88,7 @@ $('#AddGoalBtn').click(function(){
 function WhatElementsFromGoalsArray(){
     var html="";
     for(var i=0;i<goalsArray.length;i++){
-        html+='<div class="goalWhat"><span>'+(i+1)+'. '+goalsArray[i].what+'</span><button class="btnStartWorkOnGoal">Start</button><button class="goalWhatEditBtn">edit</button><button class="goalWhatDeleteBtn">delete</button></div>'
+        html+='<div class="goalWhat"><span>'+(i+1)+'. '+goalsArray[i].what+'</span><button class="btnStartWorkOnGoal">Start</button><button class="goalWhatEditBtn">edit</button><button class="goalNotesBtn">add/view Notes</button><button class="goalWhatDeleteBtn">delete</button></div>'
     }
     return html;
 }
@@ -123,13 +123,45 @@ $('#GoalsListDisplayer').on('click','.btnStartWorkOnGoal',function(){
     $("#plansScreen").show();
     var i = returnSelectedGoalIndix($(this));
     //fill goalwhatonplansscreen
-    $('.goalWhatOnPlansScreen').html("<h1>Goal: "+goalsArray[i].what+"</h1>")
+    $('.goalWhatOnPlansScreen').html("<h1>Goal: "+goalsArray[i].what+"</h1>");
     $('#GoalsListDisplayer').html(WhatElementsFromGoalsArray());
     //fill previous plans
     updateGoalsList();
     updatePlansList();
     //
 });
+
+$(".notes").hide();
+$(".showGoals").hide();
+$(".showTasks").hide();
+$('#GoalsListDisplayer').on('click','.goalNotesBtn',function(){
+    var i = returnSelectedGoalIndix($(this));
+    $('.goalWhatOnPlansScreen').html("<h1>Goal: "+goalsArray[i].what+"</h1>");
+    $(".notes").show();
+    $("#firstScreen").hide();
+    updateNotesPage("goal",i);
+    $(".showGoals").show();
+    $(".taskName").html("");
+});
+$(".showGoals").click(function(){
+    $(".notes").hide();
+    $("#firstScreen").show();
+    $("#noteInputField").val("");
+});
+function updateNotesPage(cat,index){
+    var html="";
+    if(cat=="goal"){
+        for(i=0;i<goalsArray[index].whatDetails.length;i++){
+            html+= goalsArray[index].whatDetails[i]+"<br>";
+        }
+    }else if (cat=="task"){
+        for(i=0;i<selectedTask.note.length;i++){
+            html+=selectedTask.note[i]+"<br>"; 
+        } 
+    }
+    $(".notesHolder").html(html);
+}
+
 
 
 $('#GoalsListDisplayer').on('click','.goalWhatEditBtn',function(){
@@ -238,7 +270,7 @@ function updateTaskList(){
     var html = "";
     for(i=0;i<selectedPlan.tasksArray.length;i++){
         
-        html+="<div class='task'>"+i+". "+selectedPlan.tasksArray[i].name+ "<button class='TB startTaskBtn'>start</button><button class='TB delTaskBtn'>delete</button><button class='TB makeGoalBtn'>Make Goal</button></div><br><br>";
+        html+="<div class='task'>"+i+". "+selectedPlan.tasksArray[i].name+ "<button class='TB startTaskBtn'>start</button><button class='TB delTaskBtn'>delete</button><button class='TB makeGoalBtn'>Make Goal</button><button class='TB AddNoteBtn'>Add Notes</button></div><br><br>";
     }
     $("#TaskListDisplayer").html(html);
 }
@@ -248,7 +280,7 @@ $('#tasksInputField').val("");
 
 function makeNewTask(){
     if($('#tasksInputField').val()!=""){
-        selectedPlan.tasksArray.push(new Task($('#tasksInputField').val(),[],""));
+        selectedPlan.tasksArray.push(new Task($('#tasksInputField').val(),[],[]));
     }
     $('#tasksInputField').val("");
     updateTaskList();
@@ -282,6 +314,16 @@ $("#TaskListDisplayer").on("click",".task .startTaskBtn",function(){
     $("#newPlanCreationScreen").hide();
 });
 
+$("#TaskListDisplayer").on("click",".task .AddNoteBtn",function(){
+    updateSelectedTask($(this));
+    $(".taskName").html("Add Notes on: "+selectedTask.name);
+    $(".notes").show();
+    updateAccomps(3);
+    updateNotesPage("task",selectedTaskIndex);
+    $("#newPlanCreationScreen").hide();
+    $(".showTasks").show();
+
+});
 
 $(".otherTaskBtn").click(function(){
     $(".workOnTaskScreen").hide();
@@ -291,7 +333,7 @@ $(".otherTaskBtn").click(function(){
 $("#TaskListDisplayer").on("click",".task .makeGoalBtn",function(){
     updateSelectedTask($(this));
     if(!checkGoalAlready(selectedTask.name)){
-        goalsArray.push(new Goal(selectedTask.name,"","",[],[]));
+        goalsArray.push(new Goal(selectedTask.name,[],"",[],[]));
         $("#firstScreen").show();
         $("#newPlanCreationScreen").hide();
         $(".workOnTaskScreen").hide();
@@ -303,7 +345,7 @@ $("#TaskListDisplayer").on("click",".task .makeGoalBtn",function(){
 });
 $(".makeGoalBtn").click(function(){
     if(!checkGoalAlready(selectedTask)){
-        goalsArray.push(new Goal(selectedTask,"","",[],[]));
+        goalsArray.push(new Goal(selectedTask,[],"",[],[]));
         $("#firstScreen").show();
         $("#newPlanCreationScreen").hide();
         $(".workOnTaskScreen").hide();
@@ -348,7 +390,7 @@ $('#subTasksInputField').val("");
 function updateSubTaskList(){
     var html="";
     for(i=0;i<selectedTask.subTaskArray.length;i++){
-        html+="<div class='task'>"+i+". "+selectedTask.subTaskArray[i].name+ "<button class='TB startTaskBtn'>start</button><button class='TB delTaskBtn'>delete</button><button class='TB makeGoalBtn'>Make Goal</button></div><br></br>";
+        html+="<div class='task'>"+i+". "+selectedTask.subTaskArray[i].name+ "<button class='TB startTaskBtn'>start</button><button class='TB delTaskBtn'>delete</button><button class='TB makeGoalBtn'>Make Goal</button><button class='TB AddNoteBtn'>Add Notes</button></div><br></br>";
     }
     
     $(".subTasks").html(html);
@@ -356,7 +398,7 @@ function updateSubTaskList(){
 
 function makeNewSubTask(){
     if($('#subTasksInputField').val()!=""){
-        selectedTask.subTaskArray.push(new Task($('#subTasksInputField').val(),[],""));
+        selectedTask.subTaskArray.push(new Task($('#subTasksInputField').val(),[],[]));
     }
     $('#subTasksInputField').val("");
     updateSubTaskList();
@@ -384,6 +426,22 @@ $(".subTasks").on("click",".task .startTaskBtn",function(){
     updateSubTaskList();
     $("#newPlanCreationScreen").hide();
 });
+$(".subTasks").on("click",".task .AddNoteBtn",function(){
+    $(".workOnTaskScreen").hide();
+    updateSelectedSubTask($(this));
+    $(".taskName").html("Add Notes to: "+selectedTask.name);
+    $(".notes").show();
+    updateAccomps(3);
+    updateNotesPage("task",selectedTaskIndex);
+    $("#newPlanCreationScreen").hide();
+    $(".showTasks").show();
+});
+$(".showTasks").click(function(){
+    $("#newPlanCreationScreen").show();
+    $(".notes").hide();
+});
+
+
 function updateSelectedSubTask(a){
     var i = a.parent().html().slice(0,1);
     selectedTask= selectedTask.subTaskArray[i];
@@ -402,7 +460,7 @@ $(".subTasks").on("click",".task .delTaskBtn",function(){
 $(".subTasks").on("click",".task .makeGoalBtn",function(){
     updateSelectedSubTask($(this));
     if(!checkGoalAlready(selectedTask.name)){
-        goalsArray.push(new Goal(selectedTask.name,"","",[],[]));
+        goalsArray.push(new Goal(selectedTask.name,[],"",[],[]));
         $("#firstScreen").show();
         $("#newPlanCreationScreen").hide();
         $(".workOnTaskScreen").hide();
@@ -411,3 +469,36 @@ $(".subTasks").on("click",".task .makeGoalBtn",function(){
         alert("you already have a goal named: "+selectedTask.name)
     }
 });
+
+
+$("#noteInputField").on("keypress",function(e){
+    if(e.which==13){
+        if($(".taskName").html()==""){
+            goalsArray[selectedGoalIndex].whatDetails.push($("#noteInputField").val());
+            updateNotesPage("goal",selectedGoalIndex);
+        }else{
+            selectedTask.note.push($("#noteInputField").val());
+            updateNotesPage("task",selectedTaskIndex);
+        }
+        $("#noteInputField").val("");
+        $("#noteInputField").focus();
+        
+        
+    }
+});
+$("#addNoteBtn").click(function(e){
+    
+        if($(".taskName").html()==""){
+            goalsArray[selectedGoalIndex].whatDetails.push($("#noteInputField").val());
+            updateNotesPage("goal",selectedGoalIndex);
+        }else{
+            selectedTask.note.push($("#noteInputField").val());
+            updateNotesPage("task",selectedTaskIndex);
+        }
+        $("#noteInputField").val("");
+        $("#noteInputField").focus();
+        
+        
+    
+});
+
