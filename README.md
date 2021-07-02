@@ -1,3 +1,6 @@
+hosted at https://goals-2-recursive.web.app
+
+
 # GoalsApp2
 
 ### what we need to do 
